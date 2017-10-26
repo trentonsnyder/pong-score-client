@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { isEmpty } from 'lodash'
 import Login from './Login'
 import Authenticated from './Authenticated'
+import axios from 'axios'
 import Cookies from 'universal-cookie'
 
 const cookies = new Cookies()
@@ -9,24 +10,37 @@ const cookies = new Cookies()
 class App extends Component {
   state = {
     loading: true,
-    currentUser: {}
+    currentAccount: {}
   }
 
   componentDidMount() {
     let token = cookies.get('pongToken')
     if (token) {
-      console.log('logged in yo')
-      this.setState({loading: false})
+      this.setAccount(token)
     } else {
-      console.log('not logged in')
       this.setState({loading: false})
     }
   }
 
+  setAccount = (token) => {
+    let instance = axios.create({
+      headers: {
+        'Authorization': token
+      }
+    })
+    instance.get('/api/v1/accounts/auth')
+    .then(res => {
+      this.setState({loading: false, currentAccount: res.data.account})
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
+
   trafficController = () => {
     if (!this.state.loading) {
-      if (isEmpty(this.state.currentUser)) {
-        return <Login />
+      if (isEmpty(this.state.currentAccount)) {
+        return <Login setAccount={this.setAccount} />
       } else {
         return <Authenticated />
       }
