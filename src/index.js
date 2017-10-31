@@ -1,11 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route } from 'react-router-dom'
+import { Router, Route } from 'react-router-dom'
+import history from './history'
 import App from './App'
 
 ReactDOM.render(
-  <BrowserRouter>
+  <Router history={history}>
     <Route path="/" component={App}/>
-  </BrowserRouter>,
+  </Router>,
   document.getElementById('root')
 )

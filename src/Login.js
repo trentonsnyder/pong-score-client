@@ -13,7 +13,7 @@ class Login extends Component {
   }
 
   onChange = (e) => this.setState({[e.target.name]: e.target.value})
-  
+
   handleSubmit = (e) => {
     e.preventDefault()
     this.setState({loading: true})

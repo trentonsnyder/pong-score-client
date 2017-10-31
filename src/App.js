@@ -31,9 +31,13 @@ class App extends Component {
     instance.get('/api/v1/accounts/auth')
     .then(res => {
       this.setState({loading: false, currentAccount: res.data.account})
+    }, resFail => {
+      console.log(resFail)
+      this.setState({loading: false})
     })
     .catch(error => {
       console.log(error)
+      this.setState({loading: false})
     })
   }
 

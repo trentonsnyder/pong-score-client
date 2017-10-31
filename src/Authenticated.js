@@ -1,14 +1,15 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { Route } from 'react-router-dom'
+import Menu from './Menu'
+import PlayerPortal from './PlayerPortal'
 
-class Authenticated extends Component {
-  state = {  }
-  render() {
-    return (
-      <div>
-        Authenticated
-      </div>
-    )
-  }
+const Authenticated = () => {
+  return (
+    <div>
+      <Route exact path="/" component={Menu}/>
+      <Route exact path="/player_portal" component={PlayerPortal}/>
+    </div>
+  )
 }
 
 export default Authenticated

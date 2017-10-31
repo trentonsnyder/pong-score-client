@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-class Menu extends Component {
-  state = {  }
-
-  render() {
-    return (
-      <h1>Menu</h1>
-    )
-  }
+const Menu = () => {
+  return(
+    <div>
+      <h1>Main Menu</h1>
+      <Link to='/player_portal'>Player Portal</Link>
+    </div>
+  )
 }
 
 export default Menu
