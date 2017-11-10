@@ -28,7 +28,7 @@ class App extends Component {
         'Authorization': token
       }
     })
-    instance.get('/api/v1/accounts/auth')
+    instance.get('/api/accounts/auth')
     .then(res => {
       this.setState({loading: false, currentAccount: res.data.account})
     }, resFail => {

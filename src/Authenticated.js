@@ -7,7 +7,7 @@ const Authenticated = () => {
   return (
     <div>
       <Route exact path="/" component={Menu}/>
-      <Route exact path="/player_portal" component={PlayerPortal}/>
+      <Route path="/player_portal" component={PlayerPortal}/>
     </div>
   )
 }
