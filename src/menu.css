@@ -1,0 +1,16 @@
+.menu-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.menu-container a {
+  max-width: 500px;
+  width: 100%;
+  margin: 5px;
+}
+
+.menu-container a button {
+  width: 100%;
+}
