@@ -51,7 +51,7 @@ class NewGame extends React.Component {
       axios.post('/api/games', data, headers)
       .then(res => {
         this.setState({isSubmitting: false})
-        // push to game. give it its id
+        this.props.history.push(`/game/${res.data.game.id}`)
       })
       .catch(error => {
         console.log(error)
