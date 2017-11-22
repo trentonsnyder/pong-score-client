@@ -6,6 +6,8 @@ import Cookies from 'universal-cookie'
 const cookies = new Cookies()
 
 class Game extends Component {
+  // TODO: too much logic in this component
+  // TODO: figure out how to track gameOver to disable + buttons on PlayerCards
 
   state = {
     game: {},
@@ -33,17 +35,6 @@ class Game extends Component {
     })
   }
 
-  // parsePoints = (game) => {
-  //   // should i just do this on the server? keep thinkin on it.
-  //   return game.points.reduce((points, point) => {
-  //     if (point.player_id === game.server_id) {
-  //       return points = {...points, player1: [...points.player1, point]}
-  //     } else { 
-  //       return points = {...points, player2: [...points.player2, point]}
-  //     }
-  //   }, this.state.points)
-  // }
-
   addPoint = (id) => {
     this.setState({submitting: true})
     const data = {
@@ -55,7 +46,7 @@ class Game extends Component {
     }}
     axios.post(`/api/games/${this.state.game.id}/points`, data, headers)
     .then(res => {
-      this.setState(prevState => ({submitting: false, points: [...prevState.points, res.data.point]}))
+      this.setState(prevState => ({submitting: false, points: [...prevState.points, res.data.point], game: {...prevState.game, deuce: res.data.game.deuce}}))
     }, resFail => {
       console.log('resFail', resFail)
       this.setState({submitting: false})
@@ -67,17 +58,19 @@ class Game extends Component {
   }
 
   undo = () => {
-    axios.delete(`/api/games/${this.state.game.id}/points/undo`, {}, {
+    axios.delete(`/api/games/${this.state.game.id}/points/undo`, {
       headers: {
         'Authorization': cookies.get('pongToken'),
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       }
     })
     .then(res => {
       this.setState(prevState => ({
         points: [...prevState.points.filter(point => {
           return point.id !== res.data.point.id
-        })]
+        })],
+        game: {...prevState.game, deuce: res.data.game.deuce}
       }))
     }, resFail => {
       console.log('resFail', resFail)
@@ -85,32 +78,64 @@ class Game extends Component {
     .catch(error => {
       console.log('error', error)
     })
-    // this.setState(prevState => ({points: [...prevState.points.slice(0, -1)]}))
   }
 
   renderGame = () => {
     const { game, submitting, points } = this.state
+    const pointsCount = (id)  => {
+      const playerPoints = points.filter(point => point.player_id === id)
+      return playerPoints.length
+    }
+    let player1Score = pointsCount(game.player1.id).toString()
+    let player2Score = pointsCount(game.player2.id).toString()
+    if (game.deuce) {
+      if (player1Score - player2Score === 1) {
+        player1Score = 'A'
+        player2Score = 'D'
+      } else if (player1Score === player2Score) {
+        player1Score = 'D'
+        player2Score = 'D'
+      } else if (player1Score - player2Score === 2) {
+        player1Score = 'W'
+        player2Score = 'D'
+      } else if (player2Score - player1Score === 1) {
+        player1Score = 'D'
+        player2Score = 'A'
+      } else if (player2Score - player1Score === 2) {
+        player1Score = 'D'
+        player2Score = 'W'
+      }
+    }
+    const checkWinner = (score) => {
+      if (score === '11') {
+        return 'W'
+      } else {
+        return score
+      }
+    }
     return (
       <div>
         <div style={{display: 'flex', justifyContent: 'space-around'}}>
           <div>
             <PlayerCard 
               player={game.player1}
-              points={points}
+              score={checkWinner(player1Score)}
               addPoint={this.addPoint}
-              submitting={submitting}
+              disabled={submitting}
             />
           </div>
           <div>
             <PlayerCard
               player={game.player2}
-              points={points}
+              score={checkWinner(player2Score)}
               addPoint={this.addPoint}
-              submitting={submitting}
+              disabled={submitting}
             />
           </div>
         </div>
-        <button onClick={this.undo}>undo</button>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
+          <button className='button-primary' onClick={this.undo}>undo</button>
+        </div>
       </div>
     )
   }
