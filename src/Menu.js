@@ -7,8 +7,9 @@ const Menu = () => {
     <div>
       <div className='menu-container'>
         <h1>Main Menu</h1>
-        <Link to='/new_game'><button className='button-primary'>New Game</button></Link>
-        <Link to='/player_portal'><button className='button-primary'>Player Portal</button></Link>
+        <Link to='/new-game'><button className='button-primary'>New Game</button></Link>
+        <Link to='/games'><button className='button-primary'>Games</button></Link>
+        <Link to='/player-portal'><button className='button-primary'>Players</button></Link>
       </div>
     </div>
   )

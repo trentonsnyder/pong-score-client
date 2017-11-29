@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Back from './Back'
 import PlayerCard from './PlayerCard'
 import axios from 'axios'
 import Cookies from 'universal-cookie'
@@ -7,7 +8,7 @@ const cookies = new Cookies()
 
 class Game extends Component {
   // TODO: too much logic in this component
-  // TODO: figure out how to track gameOver to disable + buttons on PlayerCards
+  // TODO: check if game is finished, put on delete button remove undo button
 
   state = {
     game: {},
@@ -113,6 +114,10 @@ class Game extends Component {
         return score
       }
     }
+    const gameOver = (player1Score, player2Score) => {
+      return player1Score === '11' || player2Score === '11' || player2Score === 'W' || player1Score === 'W'
+    }
+    const disabled = submitting || gameOver(player1Score, player2Score)
     return (
       <div>
         <div style={{display: 'flex', justifyContent: 'space-around'}}>
@@ -121,7 +126,7 @@ class Game extends Component {
               player={game.player1}
               score={checkWinner(player1Score)}
               addPoint={this.addPoint}
-              disabled={submitting}
+              disabled={disabled}
             />
           </div>
           <div>
@@ -129,12 +134,12 @@ class Game extends Component {
               player={game.player2}
               score={checkWinner(player2Score)}
               addPoint={this.addPoint}
-              disabled={submitting}
+              disabled={disabled}
             />
           </div>
         </div>
         <div style={{display: 'flex', justifyContent: 'center'}}>
-          <button className='button-primary' onClick={this.undo}>undo</button>
+          <button disabled={points.length === 0} className='button-primary' onClick={this.undo}>undo</button>
         </div>
       </div>
     )
@@ -143,6 +148,7 @@ class Game extends Component {
   render() {
     return (
       <div>
+        <Back />
         { this.state.game.id && this.renderGame() }
       </div>
     )
